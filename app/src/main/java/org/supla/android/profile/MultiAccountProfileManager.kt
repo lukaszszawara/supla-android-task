@@ -102,6 +102,12 @@ class MultiAccountProfileManager(private val dbHelper: DbHelper,
         return true
     }
 
+    override fun checkNotTooManyPraofiles(count: Int): Boolean {
+        if (count < 3)
+            return true
+        return false
+    }
+
     override fun removeProfile(id: Long) {
         repo.deleteProfile(id)
     }

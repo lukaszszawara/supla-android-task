@@ -68,6 +68,8 @@ interface ProfileManager {
      */
     fun activateProfile(id: Long, force: Boolean): Boolean
 
+    fun checkNotTooManyPraofiles(count: Int): Boolean
+
     /**
      * Remove profile
      */

@@ -38,8 +38,13 @@ class ProfilesViewModel(private val profileManager: ProfileManager)
     }
 
     fun onNewProfile() {
-        _uiState.value = ProfilesUiState.EditProfile(ProfileIdNew)
+        if(profileManager.checkNotTooManyPraofiles(profilesAdapter.itemCount)) {
+            _uiState.value = ProfilesUiState.EditProfile(ProfileIdNew)
+        }else{
+            _uiState.value = ProfilesUiState.TooManyProfiles(emptyList())
+        }
     }
+
 
     override fun onEditProfile(profileId: Long) {
         _uiState.value = ProfilesUiState.EditProfile(profileId)
@@ -58,6 +63,7 @@ class ProfilesViewModel(private val profileManager: ProfileManager)
 }
 
 sealed class ProfilesUiState {
+    data class TooManyProfiles(val profiles: List<AuthProfileItem>): ProfilesUiState()
     data class ListProfiles(val profiles: List<AuthProfileItem>): ProfilesUiState()
     data class EditProfile(val profileId: Long): ProfilesUiState()
     data class ProfileActivation(val profileId: Long): ProfilesUiState()

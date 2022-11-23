@@ -17,30 +17,22 @@ package org.supla.android.cfg
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
+import android.widget.TextView
 import androidx.databinding.DataBindingUtil
-import androidx.navigation.fragment.findNavController
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.findViewTreeLifecycleOwner
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.collect
+import androidx.navigation.fragment.findNavController
 import org.supla.android.R
 import org.supla.android.SuplaApp
-import org.supla.android.profile.ProfileIdNew
-import org.supla.android.databinding.FragmentCfgBinding
 import org.supla.android.databinding.FragmentProfilesBinding
+import org.supla.android.profile.ProfileIdNew
 
 class ProfilesFragment: Fragment() {
     private val navCoordinator: NavCoordinator by activityViewModels()
@@ -50,7 +42,6 @@ class ProfilesFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
     }
 
     override fun onCreate(sis: Bundle?) {
@@ -59,6 +50,8 @@ class ProfilesFragment: Fragment() {
         { 
           uiState ->
               when(uiState) {
+                  is ProfilesUiState.TooManyProfiles ->
+                      showErrorTooManyProfiles()
                   is ProfilesUiState.EditProfile -> 
                       openEditProfileView(uiState.profileId)
                   is ProfilesUiState.ListProfiles ->
@@ -68,6 +61,20 @@ class ProfilesFragment: Fragment() {
               }
         }
 
+    }
+
+    private fun showErrorTooManyProfiles(){
+        val builder = android.app.AlertDialog.Builder(context)
+            .setMessage(R.string.form_you_cannot_add_more_than_3_profiles)
+            .setTitle(R.string.form_stop)
+            .setPositiveButton(android.R.string.ok,
+            DialogInterface.OnClickListener { dialogInterface, i ->
+             dialogInterface.cancel()
+            })
+
+        val alertDialog = builder.create()
+
+        alertDialog.show()
     }
 
     private fun openEditProfileView(profileId: Long) {
